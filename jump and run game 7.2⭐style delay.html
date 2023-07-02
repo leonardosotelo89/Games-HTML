@@ -1,0 +1,247 @@
+<html>
+  <head>
+<meta name="viewport" 
+content="width=device-width,
+                  height=device-height, 
+                  initial-scale=1.0">
+    <title></title>
+    <style>
+    *{margin:0;padding: 0;} 
+    body{background:linear-gradient(to top, green, blue);
+               color: lime;
+               font-size: 25px ;
+               font-weight: bold ;
+               width: 100%;
+               height: 100vh;
+               position: relative ;
+               overflow: hidden ;
+               
+} 
+#ground{
+  width: 100%;
+  height: 100px ;
+  background-color: green;
+  position: absolute ;
+  bottom: 0;
+}
+#character{
+  width: 50px;
+  height: 50px;
+  background-color: red ;
+  border-radius:50%;
+  position: absolute ;
+  bottom: 100px;
+  right: calc(100% - 100px);
+}
+.obstacle{
+  width: 30px;
+  height: 100px ;
+  background-color: black;
+  position: absolute ;
+  bottom: 100px ;
+  right: 0;
+  border:2px solid black;
+}
+h2{
+  font-family: Sans-Serif;
+  margin-top:10px ;
+  margin-left: 10px;
+}
+.alert {
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
+  display: none;
+}
+strong{
+  font-size: 40px ;
+  color: lime ;
+}
+.closebtn {
+  /*
+  position: absolute ;
+  top: 700px;
+  */
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 50px;
+  line-height: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 2px solid white ;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  text-align: center ;
+}
+#character::before{
+  content: '';
+  display: block;
+}
+.line{
+  position: absolute ;
+  animation: turning 1s linear infinite ;
+}
+.inside{
+  position: absolute ;
+  width: 50px;
+  height: 50px;
+  border-radius:50%;
+  background-color: black;
+  animation: beat 1s linear infinite ;
+  display: none;
+}
+@keyframes turning{
+  from{
+    transform: rotate(0deg);
+  }50%{
+    transform: rotate(180deg);
+  }to{
+    transform: rotate(360deg);
+  }
+}
+@keyframes beat{
+  from{
+    transform: scale(0.5,0.5);
+  }50%{
+    transform: scale(0.1,0.1);
+  }to{
+    transform: scale(0.5,0.5);
+  }
+}
+    </style>
+  </head>
+  <body>
+
+<div id="ground"></div>
+<div id="character">
+  <svg class="line" width="100%" height="100%">
+  <g stroke="black" >
+    <line x1="0" y1="25" x2="50" y2="25"
+            stroke-width="5"  />
+    <line x1="25" y1="0" x2="25" y2="50"
+            stroke-width="5"  />
+  </g>
+  </svg>
+  <div class="inside"></div>
+</div>
+<div class="obstacles"></div>
+<h2>Score:<span id="score">0</span></h2>
+
+<div id="Alert" class="alert">
+  <span class="closebtn" onclick="closeAlert()">&times;</span>
+  <strong>Alert:</strong>game over
+</div>
+
+
+
+  </body>
+<script>
+
+let character = document.getElementById('character');
+let characterBottom = parseInt(window.getComputedStyle(character).getPropertyValue('bottom'));
+let characterRight = parseInt(window.getComputedStyle(character).getPropertyValue('right'));
+let characterWidth = parseInt(window.getComputedStyle(character).getPropertyValue('width'));
+let ground = document.getElementById('ground');
+let groundBottom = parseInt(window.getComputedStyle(ground).getPropertyValue('bottom'));
+let groundHeight = parseInt(window.getComputedStyle(ground).getPropertyValue('height'));
+let isJumping = false;
+let upTime;
+let downTime;
+let displayScore = document.getElementById('score');
+let score = 0;
+let textscore = null;
+
+function jump(){
+  if(isJumping)return;
+  upTime = setInterval(()=>{
+    if(characterBottom >= groundHeight + 250){
+      clearInterval(upTime);
+      setTimeout(()=>{
+      downTime = setInterval(()=>{
+        if(characterBottom <= groundHeight + 10){
+          clearInterval(downTime);
+          isJumping = false;
+        }
+        characterBottom -= 6;
+        character.style.bottom = characterBottom + 'px';
+      }, 15);
+     }, 600);
+    }
+    characterBottom += 6;
+    character.style.bottom = characterBottom + 'px';
+    isJumping = true;
+  }, 15);
+}
+
+function showScore(){
+  score++;
+  displayScore.innerText = score;
+}
+textscore = setInterval(showScore, 100);
+
+function generateObstacle(){
+  let obstacles = document.querySelector('.obstacles');
+  let obstacle = document.createElement('div');
+  obstacle.setAttribute('class', 'obstacle');
+  obstacles.appendChild(obstacle);
+  
+  let randomTimeout = Math.floor(Math.random()*3000)+ 2000;
+  let obstacleRight = -10;
+  let obstacleBottom = 100;
+  let obstacleWidth = Math.floor(Math.random()*50)+20;
+  let obstacleHeight = Math.floor(Math.random()*100)+25;
+  obstacle.style.backgroundColor = `rgb(${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)})`
+  function moveObstacle(){
+    obstacleRight += 5;
+    obstacle.style.right = obstacleRight + 'px';
+    obstacle.style.bottom = obstacleBottom + 'px';
+    obstacle.style.width = obstacleWidth + 'px';
+    obstacle.style.height = obstacleHeight + 'px';
+    if(characterRight >= obstacleRight - characterWidth && characterRight <= obstacleRight + obstacleWidth && characterBottom <= obstacleBottom + obstacleHeight){
+     
+      myFunction();
+      clearInterval(obstacleInterval);
+      clearTimeout(obstacleTimeout) ;
+      characterBottom = character.style.bottom ;
+ 
+     // location.reload();
+    }
+  }
+  let obstacleInterval = setInterval(moveObstacle, 20);
+  let obstacleTimeout = setTimeout(generateObstacle, randomTimeout);
+}
+
+generateObstacle();
+
+document.addEventListener('click', jump);
+
+function myFunction() {
+  document.getElementById("Alert").style.display = "block";
+  document.getElementById('Alert').innerHTML = 
+  `<strong>Alert:</strong>`+
+  "your final score was:"+ 
+  score + 
+  `<span class="closebtn" onclick="closeAlert()">
+  &times;
+  </span>` ;
+  clearInterval(textscore) ;
+ document.removeEventListener('click', jump);
+}
+
+function closeAlert() {
+  document.getElementById("Alert").style.display = "none";
+  location.reload();
+}
+
+function innershow(){
+  let inside = document.querySelector('.inside');
+  inside.style.display = 'block';
+}setTimeout(innershow, 60000) ;
+
+  </script>
+  <footer>                        <!--              --></footer>
+</html> 
