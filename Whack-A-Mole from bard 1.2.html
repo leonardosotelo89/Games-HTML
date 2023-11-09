@@ -1,0 +1,188 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+<meta name="viewport" 
+content="width=device-width,
+                  height=device-height, 
+                  initial-scale=1.0">
+  <title>Whack-A-Mole</title>
+ 
+    <style>
+*{margin:0px;padding:0px;}
+    body{background-color: rgb(0,0,0);
+               color: lime;
+               display: grid ;
+} 
+h2{
+  animation:colores 7s 1s linear infinite;
+}
+@keyframes colores{
+  from{
+   filter: hue-rotate(0deg);
+  }to{
+    filter: hue-rotate(360deg);
+  }
+}
+#game-container {
+  position: absolute ;
+  display: grid ;
+  grid-template-columns: repeat(5,100px );
+  grid-template-rows: repeat(5,100px );
+  place-items: center ;
+  grid-gap:10px;
+  width: 500px;
+  height: 500px;
+  left:50%;
+  top: 50%;
+  transform: translate(calc(-50% - 20px),-50%);
+}
+
+.mole-hole {
+  display:grid ;
+  place-items: center ;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(to top, darkgreen, black);
+  border: 2px solid lime ;
+}
+
+.mole {
+  width: 100px;
+  height: 80px;
+  background-color: red;
+}
+#div1{
+  position: absolute ;
+  display: grid ;
+  place-items: center ;
+  width: 100px ;
+  left: calc(50% - 50px);
+  font-size: 50px ;
+}
+button{
+  position: absolute ;
+  top: 50px;
+  background-color: blue ;
+  color: white ;
+  border: 2px solid white ;
+  width: 100px ;
+  height: 40px;
+  font-size: 25px ;
+}
+#setrata{
+  right: 5px;
+}
+#inicio{
+  left: 5px;
+}
+    </style>
+  </head>
+  <body>
+    <h2>html5</h2>
+<div id="div1"></div>
+<div id="div2"></div>
+<div id="div3"></div>
+
+
+  <div id="game-container"></div>
+ <button id="inicio" onclick="start()">inicio</button>
+ <button id="setrata">setrata</button>
+ 
+<script>
+let inicio = document.getElementById('inicio')
+let setrata = document.getElementById('setrata')
+
+let score = 0
+
+let sounds = new Array()
+sounds[0] = new Audio('sonidos mp3/puntoparati.m4a')
+sounds[1] = new Audio('sonidos mp3/leachuntastes.m4a')
+sounds[2] = new Audio('sonidos mp3/quebien.m4a')
+sounds[3] = new Audio('sonidos mp3/acertastes.m4a')
+
+document.body.onload = function(){
+  new Audio('sonidos mp3/pika pika.mp3').play()
+  console.log("pika"); 
+}
+
+
+
+const gameContainer = document.getElementById('game-container');
+
+// Create an array of mole holes
+const moleHoles = [];
+for (let i = 0; i < 25; i++) {
+  const moleHole = document.createElement('div');
+  moleHole.classList.add('mole-hole');
+  gameContainer.appendChild(moleHole);
+  moleHoles.push(moleHole);
+}
+
+// Create a function to spawn a mole
+function spawnMole() {
+  // Get a random mole hole
+  const randomMoleHole = moleHoles[Math.floor(Math.random() * moleHoles.length)];
+
+  // Add a mole image to the mole hole
+  const moleImage = document.createElement('img');
+  moleImage.src = 'el amanecer de las pequeñas cosas to web.png';
+  moleImage.classList.add('mole');
+  randomMoleHole.appendChild(moleImage);
+
+let displayScore = document.getElementById('div1')
+moleImage.onclick = function(){
+  score++
+  displayScore.innerHTML = score
+  let random = Math.floor(Math.random()*sounds.length)
+  let chosen = sounds[random]
+  chosen.play()
+  randomMoleHole.removeChild(moleImage)
+  //moleImage.removeAttribute('onclick')
+}
+  // Start a timer to hide the mole
+  setTimeout(() => {
+    randomMoleHole.removeChild(moleImage);
+  }, 1000);
+}
+
+// Start the game
+function start(){
+  new Audio('sonidos mp3/comienzo.m4a').play()
+  score = 0
+  juego()
+  inicio.setAttribute('onclick', 'reload()')
+} 
+
+function juego(){
+setTimeout(()=>{
+let intervaljuego = setInterval(() =>{
+  spawnMole()
+} , 1000);
+}, 5000)
+} 
+
+function reload(){
+  window.location.reload()
+  start()
+}
+//about
+setrata.addEventListener('click', about)
+
+function about(){
+ let st = new Audio('sonidos mp3/setrata.m4a')
+ st.play()
+ setrata.removeEventListener('click', about) 
+st.addEventListener('ended', function(){
+    repeat()
+  }) 
+}
+
+function repeat(){
+  setrata.addEventListener('click', about) 
+}
+
+
+</script>
+<footer>            <!--              --></footer>
+</body>
+</html> 
