@@ -95,10 +95,10 @@ let setrata = document.getElementById('setrata')
 let score = 0
 
 let sounds = new Array()
-sounds[0] = new Audio('sonidos/puntoparati.m4a')
-sounds[1] = new Audio('sonidos/leachuntastes.m4a')
-sounds[2] = new Audio('sonidos/quebien.m4a')
-sounds[3] = new Audio('sonidos/acertastes.m4a')
+sounds[0] = new Audio('sonidos/puntoparati.mp3')
+sounds[1] = new Audio('sonidos/leachuntastes.mp3')
+sounds[2] = new Audio('sonidos/quebien.mp3')
+sounds[3] = new Audio('sonidos/acertastes.mp3')
 
 document.body.onload = function(){
   new Audio('sonidos/pika pika.mp3').play()
@@ -147,7 +147,7 @@ moleImage.onclick = function(){
 
 // Start the game
 function start(){
-  new Audio('sonidos mp3/comienzo.m4a').play()
+  new Audio('sonidos mp3/comienzo.mp3').play()
   score = 0
   juego()
   inicio.setAttribute('onclick', 'reload()')
@@ -169,7 +169,7 @@ function reload(){
 setrata.addEventListener('click', about)
 
 function about(){
- let st = new Audio('sonidos mp3/setrata.m4a')
+ let st = new Audio('sonidos mp3/setrata.mp3')
  st.play()
  setrata.removeEventListener('click', about) 
 st.addEventListener('ended', function(){
