@@ -147,7 +147,7 @@ moleImage.onclick = function(){
 
 // Start the game
 function start(){
-  new Audio('sonidos mp3/comienzo.mp3').play()
+  new Audio('sonidos/comienzo.mp3').play()
   score = 0
   juego()
   inicio.setAttribute('onclick', 'reload()')
@@ -169,7 +169,7 @@ function reload(){
 setrata.addEventListener('click', about)
 
 function about(){
- let st = new Audio('sonidos mp3/setrata.mp3')
+ let st = new Audio('sonidos/setrata.mp3')
  st.play()
  setrata.removeEventListener('click', about) 
 st.addEventListener('ended', function(){
