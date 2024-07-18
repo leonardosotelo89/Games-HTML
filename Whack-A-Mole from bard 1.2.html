@@ -26,29 +26,29 @@ h2{
 #game-container {
   position: absolute ;
   display: grid ;
-  grid-template-columns: repeat(5,100px );
-  grid-template-rows: repeat(5,100px );
+  grid-template-columns: repeat(5,1fr );
+  grid-template-rows: repeat(5,1fr );
   place-items: center ;
   grid-gap:10px;
   width: 90%;
   height: 90%;
   left:50%;
-  top: 50%;
+  top: 60%;
   transform: translate(calc(-50% - 20px),-50%);
 }
 
 .mole-hole {
   display:grid ;
   place-items: center ;
-  width: 100px;
-  height: 100px;
+  width: 1fr;
+  height: 1fr;
   background: linear-gradient(to top, darkgreen, black);
   border: 2px solid lime ;
 }
 
 .mole {
-  width: 85px;
-  height: 95px;
+  width: 0.9fr;
+  height: 1fr;
   background-color: red;
 }
 #div1{
