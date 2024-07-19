@@ -23,6 +23,21 @@ h2{
     filter: hue-rotate(360deg);
   }
 }
+@media (min-width:720) and (min-height:1600) and (orientación:portrait){
+#game-container {
+  position: absolute ;
+  display: grid ;
+  grid-template-columns: repeat(5,1fr );
+  grid-template-rows: repeat(5,1fr );
+  place-items: center ;
+  grid-gap:8px;
+  width: calc(100% - 4px);
+  height: 80%;
+  left:50%;
+  bottom:4px ;
+  transform: translate(calc(-50%),0%);
+}
+}
 #game-container {
   position: absolute ;
   display: grid ;
