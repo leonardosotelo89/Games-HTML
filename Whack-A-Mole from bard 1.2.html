@@ -77,6 +77,24 @@ button{
   right: 5px;
 }
 
+@media (orientation:landscape){
+#game-container {
+  position: absolute ;
+  display: grid ;
+  grid-template-columns: repeat(5,1fr );
+  grid-template-rows: repeat(5,1fr );
+  place-items: center ;
+  grid-gap:8px;
+  width: calc(100% / 3 - 4px);
+  height: calc(100% - 4px);
+  left:50%;
+  bottom:4px ;
+  transform: translate(calc(-50%),0%);
+}
+button{border:2px solid lime;}
+}
+
+
 /* tablet 602px 828px celu 360px 659px */
 
 /*tablet width 602px height 828px*/
@@ -114,22 +132,6 @@ button{border:2px solid yellow;}
 }
 }
 
-@media (orientation:landscape){
-#game-container {
-  position: absolute ;
-  display: grid ;
-  grid-template-columns: repeat(5,1fr );
-  grid-template-rows: repeat(5,1fr );
-  place-items: center ;
-  grid-gap:8px;
-  width: calc(100% / 3 - 4px);
-  height: calc(100% - 4px);
-  left:50%;
-  bottom:4px ;
-  transform: translate(calc(-50%),0%);
-}
-button{border:2px solid lime;}
-}
 
     </style>
   </head>
