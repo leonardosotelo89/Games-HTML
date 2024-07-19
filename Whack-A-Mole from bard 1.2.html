@@ -23,21 +23,7 @@ h2{
     filter: hue-rotate(360deg);
   }
 }
-@media (max-width:273) and (max-height:618) and (orientation:portrait){
-#game-container {
-  position: absolute ;
-  display: grid ;
-  grid-template-columns: repeat(5,1fr );
-  grid-template-rows: repeat(5,1fr );
-  place-items: center ;
-  grid-gap:8px;
-  width: calc(100% - 4px);
-  height: 80%;
-  left:50%;
-  bottom:4px ;
-  transform: translate(calc(-50%),0%);
-}
-}
+
 #game-container {
   position: absolute ;
   display: grid ;
@@ -90,7 +76,21 @@ button{
 #setrata{
   right: 5px;
 }
-
+@media (max-width:273) and (max-height:618) and (orientation:portrait){
+#game-container {
+  position: absolute ;
+  display: grid ;
+  grid-template-columns: repeat(5,1fr );
+  grid-template-rows: repeat(5,1fr );
+  place-items: center ;
+  grid-gap:8px;
+  width: calc(100% - 4px);
+  height: 80%;
+  left:50%;
+  bottom:4px ;
+  transform: translate(calc(-50%),0%);
+}
+}
     </style>
   </head>
   <body>
@@ -106,6 +106,21 @@ button{
  
 <script>
 /*div1.innerHTML = window.innerWidth+“<br>"+window.innerHeight*/
+
+//fix device orientation 
+document.addEventListener('DOMContentLoaded', (event) => {
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait')
+            .then(() => {
+                console.log('Orientation locked to portrait');
+            })
+            .catch((error) => {
+                console.error('Error locking orientation:', error);
+            });
+    } else {
+        console.warn('Screen orientation lock API not supported');
+    }
+});
 
 
 let inicio = document.getElementById('inicio')
