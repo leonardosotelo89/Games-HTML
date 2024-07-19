@@ -76,7 +76,8 @@ button{
 #setrata{
   right: 5px;
 }
-@media (max-width:273) and (max-height:618) and (orientation:portrait){
+/*width 273 height 618*/
+@media (orientation:landscape){
 #game-container {
   position: absolute ;
   display: grid ;
@@ -84,13 +85,15 @@ button{
   grid-template-rows: repeat(5,1fr );
   place-items: center ;
   grid-gap:8px;
-  width: calc(100% - 4px);
+  width: calc(100% / 3 - 4px);
   height: 80%;
   left:50%;
   bottom:4px ;
   transform: translate(calc(-50%),0%);
 }
+button{border:2px solid like;}
 }
+
     </style>
   </head>
   <body>
