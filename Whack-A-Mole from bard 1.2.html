@@ -113,12 +113,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         screen.orientation.lock('portrait')
             .then(() => {
                 console.log('Orientation locked to portrait');
+div1.innerHtml = 'locked'
             })
             .catch((error) => {
                 console.error('Error locking orientation:', error);
             });
     } else {
         console.warn('Screen orientation lock API not supported');
+div1.innerHtml = 'not supported'
     }
 });
 
