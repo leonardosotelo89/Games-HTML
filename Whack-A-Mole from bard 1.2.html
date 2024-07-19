@@ -76,7 +76,24 @@ button{
 #setrata{
   right: 5px;
 }
-/*width 273 height 618*/
+
+/* tablet 602px 828px celu 360px 659px */
+@media (max-width:360px) and (max-height:659px){
+#game-container {
+  position: absolute ;
+  display: grid ;
+  grid-template-columns: repeat(5,1fr );
+  grid-template-rows: repeat(5,1fr );
+  place-items: center ;
+  grid-gap:8px;
+  width: calc(100% - 4px);
+  height: 80%;
+  left:50%;
+  bottom:4px ;
+  transform: translate(calc(-50%),0%);
+}
+}
+
 @media (orientation:landscape){
 #game-container {
   position: absolute ;
@@ -85,13 +102,13 @@ button{
   grid-template-rows: repeat(5,1fr );
   place-items: center ;
   grid-gap:8px;
-  width: calc(100% / 3 - 4px);
-  height: 80%;
+  width: calc(100% / 2 - 4px);
+  height: 100%;
   left:50%;
   bottom:4px ;
   transform: translate(calc(-50%),0%);
 }
-button{border:2px solid like;}
+button{border:2px solid lime;}
 }
 
     </style>
