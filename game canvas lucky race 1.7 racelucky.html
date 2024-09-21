@@ -1,0 +1,456 @@
+<html lang="en">
+
+  <head>
+
+<meta charset="UTF-8">
+
+<meta 
+
+name="viewport" 
+
+content="width=device-width,
+
+         height=device-height, 
+
+         initial-scale=1.0">
+
+    <title></title>
+
+    <style>
+
+*{margin:0px;padding:0px;box-sizing:border-box;}
+
+    body{
+
+      background-color: rgb(0,0,0);
+
+      color: lime;
+
+} 
+
+h2{
+
+  animation:colores 7s 1s linear infinite;
+
+}
+
+@keyframes colores{
+
+  from{
+
+   filter: hue-rotate(0deg);
+
+  }to{
+
+    filter: hue-rotate(360deg);
+
+  }
+
+}
+
+#container{
+
+  position: absolute ;
+
+  left: 0px;
+
+  top: 0px;
+
+  width:100%;
+
+  height: 100%;
+
+  display: grid ;
+
+  place-items: center ;
+
+}
+
+#canvas1{
+
+  border: 2px solid lime ;
+
+  max-width: 100%;
+
+  max-height: 100%;
+
+}
+
+#reset{
+
+  position: absolute ;
+
+  bottom: 0px;
+
+  left: 50px ;
+
+  width: 100px ;
+
+  height: 50px ;
+
+  font-size: 40px ;
+
+  background-color: transparent;
+
+  color: lime ;
+
+  border:2px solid lime ;
+
+}
+
+#race{
+
+  position: absolute ;
+
+  bottom: 0px;
+
+  right: 50px ;
+
+  width: 100px ;
+
+  height: 50px ;
+
+  font-size: 40px ;
+
+  background-color: transparent;
+
+  color: lime ;
+
+  border: 2px solid lime ;
+
+}
+#div1 {
+  position: absolute ;
+  left: 20px ;
+  top: 200px ;
+}
+#div2{
+  position: absolute ;
+  left: 20px;
+  top: 50px ;
+}
+    </style>
+
+  </head>
+
+  
+
+  <body>
+
+    
+
+    <h2>html canvas</h2>
+
+<div id="div1"></div>
+
+<div id="div2"></div>
+
+<div id="div3"></div>
+
+<div id="container">
+
+<canvas id="canvas1" width="350" height="650"></canvas>
+
+</div>
+
+<button id="reset" onclick="reset()">reset</button>
+
+<button id="race" onclick="race()">race</button>
+
+<script>
+const racebutton = document.querySelector('#race') 
+const canvas1 = document.querySelector('#canvas1')
+
+const ctx1 = canvas1.getContext('2d')
+
+canvas1.width = 596 || window.innerWidth - 4
+
+canvas1.height = 696 || window.innerHeight - 204
+
+let start = false 
+let winner = false 
+
+
+class Round{
+
+  constructor(x, y, r, stroke, fill){
+
+    this.x = x 
+
+    this.y = y 
+
+    this.r = r 
+
+    this.stroke = stroke 
+
+    this.fill = fill 
+
+    this.speedy = null
+
+    this.randomspeedy = null
+    
+    this.interval = parseInt(1 + Math.random()*6)
+
+  }
+
+  draw(){
+
+    ctx1.lineWidth = 4
+
+    ctx1.strokeStyle = this.stroke 
+
+    ctx1.fillStyle = this.fill 
+
+    ctx1.beginPath()
+
+    ctx1.arc(this.x, this.y, this.r, 0,Math.PI* 2, false )
+
+    ctx1.closePath()
+
+    ctx1.stroke()
+
+    ctx1.fill()
+
+  }
+  
+}
+ 
+let one = new Round(50,650,25,'black', 'red')
+
+let two = new Round(150,650,25,'black', 'yellow')
+
+let three = new Round(250,650,25,'black', 'green')
+
+let four = new Round(350,650,25,'black', 'cyan')
+
+let five = new Round(450,650,25,'black', 'blue')
+
+let six = new Round(550,650,25,'black', 'magenta')
+
+let colors = [one, two, three, four, five, six]
+
+console.log(colors) 
+
+let already = []
+
+let randomspeedy
+
+function initiallucky(){
+
+  already = []
+
+  for(let color of colors){
+      
+    do{
+
+    randomspeedy = parseFloat(Math.random()*0.5+0.1)
+
+    } while (already.includes(randomspeedy))
+
+    color.randomspeedy = randomspeedy.toFixed(2)
+
+    already.push(randomspeedy.toFixed(2))
+
+  }
+
+}
+
+initiallucky()
+
+
+function racelucky(){
+
+  for(let color of colors){
+    if(color.interval <= 0){
+      
+    color.interval = parseInt(1 + Math.random()*5)
+   
+    randomspeedy = parseFloat(Math.random()*0.5+0.1)
+    
+    color.randomspeedy = randomspeedy.toFixed(2)
+
+    }else{
+      color.interval -= 1
+    }
+
+  }
+
+}
+setInterval(racelucky, 1000)
+
+
+let fills = 
+
+['red','yellow','green','cyan','blue','magenta']
+
+let filled = []
+
+let randomfill
+
+function randomcolor(){
+  filled = [] 
+
+  for(let color of colors){
+
+    do{
+
+    randomfill = parseInt(Math.random()*fills.length)
+
+    } while (filled.includes(randomfill))
+
+    color.fill = fills[randomfill] 
+
+    filled.push(randomfill) 
+
+  }
+
+}
+
+randomcolor()
+
+function speedsmooth(){
+
+  for(let color of colors){
+
+    if(color.speedy > color.randomspeedy){
+
+      color.speedy -= 0.0025
+
+    }
+
+    if(color.speedy < color.randomspeedy){
+
+      color.speedy += 0.0025
+
+    }
+
+  }
+
+}
+
+function raceup(){
+
+  for(let color of colors){
+
+    color.y -= color.speedy 
+
+  }
+
+}
+
+function checkwinner(){
+
+  for(let color of colors){
+
+    if(color.y - color.r <= 0){
+
+      ctx1.fillStyle = color.fill
+
+      //ctx1.fillRect(0,0, canvas1.width, canvas1.height )
+
+  ctx1.strokeStyle = 'lime'
+
+  ctx1.lineWidth = 2 
+
+  //Size and Font family 
+
+  ctx1.font = '150px times new roman' ; 
+
+  // Text to render,  x, y, optional maxWidth
+
+  ctx1.strokeText('winner', 50, 600);
+
+  ctx1.fillText('winner',50,600)
+
+      winner = true
+    }
+
+  }
+
+}
+
+const reset = ()=>{
+  
+  //window.location.reload()
+  
+ /* for(let color of colors) {
+    color.y = 550
+   } */
+  
+  for(let i = 0;i < colors.length;i++){
+     colors[i].y = 650
+  } 
+  randomcolor() 
+  
+  winner = false 
+  if(start) {
+  loop() 
+  start = false 
+  } 
+}
+
+const race = ()=> {
+
+  start = start ? false : true
+}
+
+setInterval(() =>{
+  racebutton.innerHTML = start && !winner ? 'stop' : 'race' 
+ }, 20)
+ 
+ function info1(){
+   div1.innerHTML = already+"<br>" + 
+                  one.speedy + "<br>" + 
+                  filled
+ }
+ // To insert blank spaces in text in HTML, type either &nbsp; or &#160;
+ let blank = '&#160' 
+ function info2(){
+   div2.innerHTML = 
+`${one.interval}: ${one.randomspeedy} ${blank.repeat(12)}
+ ${two.interval}: ${two.randomspeedy} ${blank.repeat(12)}
+ ${three.interval}: ${three.randomspeedy}${blank.repeat(12)}
+ ${four.interval}: ${four.randomspeedy}${blank.repeat(12)}
+ ${five.interval}: ${five.randomspeedy}${blank.repeat(12)}
+ ${six.interval}: ${six.randomspeedy}`
+ }
+ 
+function loop(){
+  
+if(winner) return
+
+  ctx1.clearRect(0,0, canvas1.width, canvas1.height )
+
+  
+  for(let color of colors){
+    color.draw()
+  }
+
+  if(start)raceup()
+
+  speedsmooth()
+
+  checkwinner()
+
+  
+
+  
+
+ 
+ //info1()
+ info2()
+  
+
+  let mainloop = requestAnimationFrame(loop) 
+
+}
+loop() 
+
+
+</script>
+
+<footer>            <!--              --></footer>
+
+</body>
+
+</html> 
