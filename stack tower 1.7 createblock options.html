@@ -1,0 +1,486 @@
+<html lang="en">
+  <head>
+<meta charset="UTF-8">
+<meta name="viewport" 
+content="width=device-width,
+                  height=device-height, 
+                  initial-scale=1.0">
+    <title></title>
+    <style>
+*{margin:0px;padding:0px;}
+    body{background-color: rgb(0,0,0);
+               color: lime;
+} 
+h2{
+  animation:colores 7s 1s linear infinite;
+}
+@keyframes colores{
+  from{
+   filter: hue-rotate(0deg);
+  }to{
+    filter: hue-rotate(360deg);
+  }
+}
+.plus{
+  position: absolute ;
+  right: 0px;
+  top: 0px;
+  width: 50px;
+  height: 50px;
+  text-align: center ;
+  animation:activo 5.5s 0s linear infinite alternate ;
+  transition:background 0.5s linear;
+}
+@keyframes activo{
+  from{
+    
+  }50%{
+    border-radius: 50%;
+  }to{
+    
+  }
+}
+#canvas1, #canvasL, #canvasR{
+  position: absolute ;
+  top: 100px ;
+}
+#div1 {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translate(-50%, 0);
+  font-size: 50px;
+  color: yellow;
+  text-shadow: 2px 1px 5px rgba(0, 0, 255, 0.99);
+}
+#canvasR{
+  z-index:2;
+}
+    </style>
+  </head>
+  <body>
+   <h2>leonardosotelo89</h2>
+   <div class="plus">+ +</div>
+   
+<div id="div1"></div>
+
+  <canvas id="canvas1"></canvas>
+  <canvas id="canvasL"></canvas>
+  <canvas id="canvasR"></canvas>
+  
+<script>
+const canvas1 = document.getElementById('canvas1')
+const ctx1 = canvas1.getContext('2d')
+canvas1.width = 596 
+canvas1.height = 700
+/*
+ctx1.scale(0.25, 0.25)
+ctx1.translate(1000,0)
+*/
+
+
+
+const canvasL = document.getElementById('canvasL')
+const ctxL = canvasL.getContext('2d')
+canvasL.width = 596 
+canvasL.height = 700
+/*
+ctxL.scale(0.25, 0.25)
+ctxL.translate(1000,0)
+*/
+
+const canvasR = document.getElementById('canvasR')
+const ctxR = canvasR.getContext('2d')
+canvasR.width = 596 
+canvasR.height = 700
+/*
+ctxR.scale(0.25, 0.25)
+ctxR.translate(1000,0)
+*/
+
+let currentwidth = 400
+let height = 25
+let speed = 1
+let drownspeed = 1
+let blockstart = 275
+let basestart = 300
+let score = 0
+let drown = 0
+let Ltimer = 100
+let Rtimer = 500
+let L = 0 
+let R = 0
+
+
+let current = null
+let speedX = null
+let leftdebris = null 
+let rightdebris = null
+
+let hitR = false 
+let hitL = false
+let down = false 
+let over = false 
+
+let all = []
+
+let randomHue = parseInt(Math.random()* 360)
+
+
+
+class generic {
+  constructor(x, y){
+    this.x = x 
+    this.y = y 
+    this.w = currentwidth
+    this.h = height
+    this.hue = parseInt(Math.random()*360)
+    this.color =  `hsla(${this.hue}deg, 100%,50%,1.0)`
+  }
+ draw(){
+ ctx1.fillStyle = this.color
+ ctx1.fillRect(this.x,this.y,this.w,this.h)
+ } 
+}
+
+
+function createblock(){
+ let LR = [0 - currentwidth, canvas1.width ]
+ let chosenX = LR[parseInt(Math.random()*LR.length)] 
+ speedX = chosenX == LR[0] ? speed : -speed
+ let block = new generic(chosenX,blockstart)
+ current = block
+ hitR = false
+ hitL = false
+ down = false
+ console.log('current, score', current, score) 
+}
+
+class initial {
+  constructor(x, y, w, h){
+  this.x = x 
+  this.y = y 
+  this.w = w 
+  this.h = h 
+  this.color = `hsl(${randomHue}deg,100%, 50%)` 
+  } 
+  draw(){
+    ctx1.fillStyle = this.color
+    ctx1.fillRect(this.x,this.y,this.w,this.h)
+  }
+}
+const base = new initial(100,basestart,400,height, 'blue')
+all.push(base)
+console.log(base) 
+//canvas1.style.border = `2px solid hsl(${(Math.random()*360)}deg,100%,50%)`
+canvas1.style.border = `2px solid ${base.color}`
+
+
+let debris = {
+  x:0,
+  y:0,
+  w:currentwidth,
+  h:height, 
+  color:'white'
+}
+
+function createdebrisL(item){
+  this.x = item.x
+  this.y = item.y 
+  this.w = item.w 
+  this.h = item.h 
+  this.color = item.color
+  this.draw = function(){
+    ctxL.save();  // Save the current state
+    ctxL.translate(this.x + this.w / 2, this.y + this.h / 2); // Move origin to center of debris
+    ctxL.rotate(L); // Rotate around the new origin
+    ctxL.translate(-(this.x + this.w / 2), -(this.y + this.h / 2)); // Move the origin back
+
+    ctxL.fillStyle = this.color;
+    ctxL.fillRect(this.x, this.y, this.w, this.h);
+ 
+    ctxL.restore(); // Restore the state after drawing
+  }
+}
+function createdebrisR(item){
+  this.x = item.x
+  this.y = item.y 
+  this.w = item.w 
+  this.h = item.h 
+  this.color = item.color
+  this.draw = function(){
+    
+    ctxR.save();  // Save the current state
+    ctxR.translate(this.x + this.w / 2, this.y + this.h / 2); // Move origin to center of debris
+    ctxR.rotate(R); // Rotate around the new origin
+    ctxR.translate(-(this.x + this.w / 2), -(this.y + this.h / 2)); // Move the origin back
+
+    ctxR.fillStyle = this.color;
+    ctxR.fillRect(this.x, this.y, this.w, this.h);
+ 
+    ctxR.restore(); // Restore the state after drawing
+  }
+}
+
+function movedebris(){
+  if(leftdebris){
+  
+  leftdebris.x -= 0.25
+  leftdebris.y += 1.5
+  
+  if(Ltimer > 0){
+  Ltimer--
+  L -= parseFloat(0.01)
+  if(Ltimer <= 0) Ltimer = 0
+  } 
+  } 
+  
+  if(rightdebris){
+  rightdebris.x += 0.25
+  rightdebris.y += 1.5
+  
+  if(Rtimer > 0){
+  Rtimer -=1
+  R += parseFloat(0.01) 
+  if(Rtimer <= 0) Rtimer = 0
+  } 
+  } 
+}
+
+
+function movelr(){
+  current.x += speedX;
+  if(current.x + current.w > canvas1.width) hitR = true
+  if(current.x < 0) hitL = true
+    // Check for right edge & Reverse direction
+  if(current.x + current.w > canvas1.width && hitL)
+     speedX = -speedX; 
+  
+    // Check for left edge & Reverse direction
+  if (current.x < 0 && hitR) speedX = -speedX; 
+}
+
+function movedown(){
+  if(current !== null) current.y += drownspeed
+
+  if(collision(current, all[0]) && current !== null){
+  let difference 
+  
+  if(current.x + current.w > all[0].x + all[0].w){
+  // Adjusted parentheses
+  difference = 
+  (current.x + current.w) - (all[0].x + all[0].w)
+  current.w = current.w - difference
+  // Corrected positioning logic
+  current.x = all[0].x + all[0].w - current.w
+  currentwidth = current.w
+  //debris
+  debris.x = current.x + current.w  
+  debris.y = current.y 
+  debris.w = difference
+  debris.color = current.color
+  R = 0
+  let debrisjr  = new createdebrisR(debris)
+  rightdebris = debrisjr
+  Rtimer = 500
+  } 
+  if(current.x < all[0].x){
+    difference = all[0].x - current.x 
+    current.x = all[0].x
+    current.w = current.w - difference 
+    currentwidth = current.w
+    //debris
+    debris.x = current.x - difference
+    debris.y = current.y 
+    debris.w = difference
+    debris.color = current.color
+    L = 0
+    let debrisjr  = new createdebrisL(debris)
+    leftdebris = debrisjr
+    Ltimer = 500
+  }
+  current.y = all[0].y - height
+  all.unshift(current)
+  //movedown variables update
+  score++
+  current = null
+  drown = height
+  //create new block using closure
+  //createblock()
+  } 
+}
+
+function moveall(){
+  if (drown > 0 && all.length > 0) {
+    drown -= drownspeed;   // Decrease drowning value
+    all.map((block)=>{
+       block.y += drownspeed
+    })
+  }
+}
+
+function alldraw(){
+  if(all.length > 0){
+  all.forEach((block) => {
+      block.draw();
+  });
+  } 
+}
+
+function checkGameOver(){
+  if( current.y + height > canvas1.height) {
+  over = true
+  current.y = canvas1.height - height
+  
+  //doesn't allow to display gameover message 
+  //window.cancelAnimationFrame(game)
+  //console.log('gameover') 
+  } 
+}
+
+function gameovermessage(){
+  if(over){
+    ctx1.fillStyle = current.color || 'darkcyan';
+    ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+    ctx1.fillStyle = 'black';
+    ctx1.strokeStyle = 'yellow'
+    ctx1.lineWidth = 2
+    ctx1.font = '80px verdana';
+    ctx1.textAlign = 'center';
+    ctx1.fillText('Game Over', canvas1.width / 2, canvas1.height / 2 - 180);
+    ctx1.fillText('Tap to Restart', canvas1.width / 2, canvas1.height / 2 - 80);
+    
+    ctx1.strokeText('Game Over', canvas1.width / 2, canvas1.height / 2 - 180);
+    ctx1.strokeText('Tap to Restart', canvas1.width / 2, canvas1.height / 2 - 80);
+  } 
+}
+
+function restart(){
+
+   /*
+   all = []
+   base.y = basestart 
+   base.color = `hsl(${(Math.random()*360)}deg,100%,50%)`
+   canvas1.style.border = `2px solid ${base.color}`
+   all.push(base);  // Reset to the base
+   score = 0;
+   currentwidth = 400;
+   drown = 0;
+   over = false;
+   current = null;
+   leftdebris = null;
+   rightdebris = null;
+   speedX = null;
+   loop();
+   //calling loop() instead of 
+   //game.requestAnimationFrame(loop)
+   //leads to exponential frame speed
+   */
+   
+  
+  let base = all.pop()
+  base.y = basestart
+  base.color = `hsl(${(Math.random()*360)}deg,100%,50%)`
+  canvas1.style.border = `2px solid ${base.color}`
+  all = []
+  all[0] = base
+  score = 0 
+  currentwidth = 400;
+  drown = 0;
+  over = false;
+  current = null;
+  leftdebris = null;
+  rightdebris = null;
+  speedX = null;
+  current = null
+  
+  //unnecessary it's better keep mainloop running
+  //game.requestAnimationFrame(loop)
+  
+  //less efficient but quite functional 
+  //window.location.reload()
+}
+
+
+
+
+
+function loop(){
+  
+ctx1.clearRect(0,0,canvas1.width, canvas1.height)
+ctxL.clearRect(-2000,-2000,4000, 4000)
+ctxR.clearRect(-2000,-2000,4000, 4000)
+  if(score == 0 && current == null)createblock()
+  
+  
+ if(!down) movelr()
+ if(down) movedown()
+ // Create a new block after updating movedown variables
+ if(current == null && drown === height)createblock()
+ 
+ gameovermessage()
+ moveall()
+ alldraw()
+ if(current !== null)  current.draw()
+ checkGameOver()
+ 
+ if(leftdebris) leftdebris.draw()
+ if(rightdebris) rightdebris.draw()
+ movedebris()
+ 
+ 
+ div1.innerHTML = score
+ let game = window.requestAnimationFrame(loop)
+}
+loop()
+
+
+document.body.onpointerdown = ()=> {
+  if(!down) down = true
+  if(over){
+    over = false 
+    restart()
+  }
+} 
+
+
+//collision detection 
+function collision(block, base){
+  const a = block
+  const b = base
+
+  if(a.y + a.h > b.y && 
+     a.y < b.y + b.h && 
+     a.x + a.w > b.x &&
+     a.x < b.x + b.w){
+    return true 
+  }else {
+    return false
+  } 
+} 
+
+
+
+
+
+/*
+document.body.addEventListener('click', function(){
+  document.body.style.backgroundColor = `rgb(
+  ${Math.floor(Math.random()*256)} , 
+  ${Math.ceil(Math.random()*256)} ,
+  ${Math.round(Math.random()*256)} ) `
+})
+//Math.floor Math.ceil Math.round parseInt
+*/
+let plus = document.querySelector('.plus')
+let colores = setInterval(()=>{
+  plus.style.backgroundColor = `rgb(
+  ${parseInt(Math.random()*256)} , 
+  ${parseInt(Math.random()*256)} ,
+  ${parseInt(Math.random()*256)} ) `
+}, 5500 )
+</script>
+
+<footer>            <!--              --></footer>
+</body>
+</html> 
