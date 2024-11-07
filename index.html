@@ -54,7 +54,17 @@ border-radius:50%;
 
 closer.onclick = () =>{
  window.close()
+ closeWebView() 
 } 
+
+
+function closeWebView() {
+            if (typeof Android !== 'undefined' && Android.closeWebView) {
+                Android.closeWebView(); // Call the Java method
+            } else {
+                alert('Android interface not available');
+            }
+        }
 
 </script>
 <footer>                        <!--              --></footer>
