@@ -50,12 +50,12 @@ closer.onclick = () =>{
 
 
 function closeWebView() {
-            if (typeof Android !== 'undefined' && Android.closeWebView) {
-                Android.closeWebView(); // Call the Java method
-            } else {
-                alert('Android interface not available');
-            }
-        }
+     if (typeof Android !== 'undefined' && Android.closeWebView) {
+        Android.closeWebView(); // Call the Java method
+     } else {
+       alert('Android interface not available');
+       }
+}
 
 </script>
 <footer>                 <!--              --></footer>
