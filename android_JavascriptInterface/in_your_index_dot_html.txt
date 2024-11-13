@@ -1,1 +1,22 @@
+ <span id="closer" 
+style="position:absolute;right:0px;top:0px;width:25px;height:25px;color:red;background-color:black;border:2px solid red;font-size:20px;padding:5px;border-radius:50%;display:grid;place-items:center;font-weight:1000;">
+x
+</span>
+<script>
+//communicate to a webview using android javascriptinterface 
+closer.onclick = () =>{
+ closeWebView() //close android webview 
+} 
 
+
+function closeWebView() {
+     if (typeof Android !== 'undefined' && 
+         Android.closeWebView) {
+        Android.closeWebView(); // Call the Java method
+     } else {
+       //alert('Android interface not available');
+       window.close() //close web version
+       }
+}
+
+</script>
