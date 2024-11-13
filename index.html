@@ -44,7 +44,6 @@ x
 <script>
 //communicate to a webview using android javascriptinterface 
 closer.onclick = () =>{
- window.close() //close web version
  closeWebView() //close android webview 
 } 
 
@@ -55,6 +54,7 @@ function closeWebView() {
         Android.closeWebView(); // Call the Java method
      } else {
        alert('Android interface not available');
+       window.close() //close web version
        }
 }
 
