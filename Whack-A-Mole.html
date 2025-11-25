@@ -190,6 +190,16 @@ div1.innerHTML = 'not supported'
 let inicio = document.getElementById('inicio')
 let setrata = document.getElementById('setrata')
 
+
+//is better to have a single audio element browsers normally allow six audio elements so always check how much are 
+let mainaudio = new Audio()
+let startaudio = 'sonidos/comienzo.mp3' 
+let st = 'sonidos/setrata.mp3'
+
+
+
+let startboolean = false
+console.log(startaudio, st) 
 let score = 0
 
 let sounds = new Array()
@@ -199,8 +209,9 @@ sounds[2] = new Audio('sonidos/quebien.mp3')
 sounds[3] = new Audio('sonidos/acertastes.mp3')
 
 document.body.onload = function(){
-  new Audio('sonidos/pika pika.mp3').play()
-  console.log("pika"); 
+  mainaudio.src = 'sonidos/pika pika.mp3'
+  mainaudio.play()
+  console.log("pika", "if user gesture play audio file"); 
 }
 
 
@@ -246,11 +257,39 @@ moleImage.onclick = function(){
 
 // Start the game
 function start(){
-  new Audio('sonidos/comienzo.mp3').play()
+  startboolean = true
+  console.log("mainaudio.paused",mainaudio.paused,
+              "startboolean",startboolean) 
+  if (mainaudio.paused && startboolean) {
+  mainaudio.src = startaudio
+  mainaudio.play()
   score = 0
+  startboolean = false 
   juego()
-  inicio.setAttribute('onclick', 'reload()')
-} 
+   mainaudio.onended = ()=>{
+   inicio.innerHTML = "RELOAD"
+   inicio.setAttribute('onclick', 'reload()')
+   } 
+  }
+  if (!mainaudio.paused && startboolean) {
+  mainaudio.addEventListener("ended", ()=>{
+    if(startboolean == false )return
+    console.log("se trata ended") 
+   
+    mainaudio.src = startaudio 
+    mainaudio.play()
+  
+  score = 0
+  startboolean = false 
+  juego()
+   mainaudio.onended = ()=>{
+   inicio.innerHTML = "RELOAD"
+   inicio.setAttribute('onclick', 'reload()')
+   
+   } 
+  }) 
+  }
+}
 
 function juego(){
 setTimeout(()=>{
@@ -268,10 +307,11 @@ function reload(){
 setrata.addEventListener('click', about)
 
 function about(){
- let st = new Audio('sonidos/setrata.mp3')
- st.play()
+  if(!mainaudio.paused)return
+ mainaudio.src = st 
+ mainaudio.play()
  setrata.removeEventListener('click', about) 
-st.addEventListener('ended', function(){
+mainaudio.addEventListener('ended', function(){
     repeat()
   }) 
 }
