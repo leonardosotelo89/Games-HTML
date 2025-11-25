@@ -235,9 +235,11 @@ function spawnMole() {
   // Add a mole image to the mole hole
   const moleImage = document.createElement('img');
   moleImage.src = 'imagenes/leonardosotelo89.jpg';
+  moleImage.onload = () =>{
   moleImage.classList.add('mole');
   moleImage.classList.add('upndown');
   randomMoleHole.appendChild(moleImage);
+} 
 
 let displayScore = document.getElementById('div1')
 moleImage.onclick = function(){
