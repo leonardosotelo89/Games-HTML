@@ -35,7 +35,7 @@ h2{
   height: 90%;
   left:50%;
   bottom:4px ;
-  transform: translate(calc(-50%),0%);
+  transform: translate(-50%,0%);
 }
 
 .mole-hole {
@@ -50,17 +50,32 @@ h2{
 .mole {
   width: calc(100% - 10px);
   height: calc(100% - 10px);
-  background-color: red;
+  background-color: transparent;
+  background-size: cover;
+}
+.mole-wrapper {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  will-change: transform;
 }
 .upndown {
   animation: picture 1s linear;
+}
+.normaltshirt{
+  background-image: url('imagenes/leonardosotelo89.jpg');
+}
+.redtshirt{
+  background-image: url('imagenes/polerarojagoogleaistudio.png');
 }
 #div1{
   position: absolute ;
   display: grid ;
   place-items: center ;
-  width: 100px ;
-  left: calc(50% - 50px);
+  width: 200px ;
+  left: calc(50% - 100px);
   font-size: 50px ;
 }
 button{
@@ -80,17 +95,17 @@ button{
   right: 5px;
 }
 @keyframes picture {
-  from{
-    transform:translate(0%,100%);
-  }
-  10%{
+  from { 
+    transform:translate(0%,100%); 
+  } 
+  25%{
     transform: translate(0%,0%);
-  }
-  90%{
+  } 
+  55%{
     transform: translate(0%,0%);
-  }
+  } 
   to{
-    transform: translate(0%,200%);
+    transform: translate(0%,100%);
   }
 }
 
@@ -171,48 +186,62 @@ div1.style.zIndex = '10'
 */
 
 //fix device orientation 
-document.addEventListener('DOMContentLoaded', (event) => {
-    if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('portrait')
-            .then(() => {
-                console.log('Orientation locked to portrait');
-div1.innerHTML = 'locked'
-            })
-            .catch((error) => {
-                console.error('Error locking orientation:', error);
-            });
-    } else {
-        console.warn('Screen orientation lock API not supported');
-div1.innerHTML = 'not supported'
-    }
-});
+
 
 
 let inicio = document.getElementById('inicio')
 let setrata = document.getElementById('setrata')
+let displayScore = document.getElementById('div1')
 
 
-//is better to have a single audio element browsers normally allow six audio elements so always check how much are 
+//is better to have a single audio element browsers normally allow six audio elements so always check how many are 
 let mainaudio = new Audio()
+
 let startaudio = 'sonidos/comienzo.mp3' 
 let st = 'sonidos/setrata.mp3'
 
 
-
 let startboolean = false
 console.log(startaudio, st) 
+let photos = []
+let id = 1
+
 let score = 0
+let aduration = 3 //minimum 0.5
+let timer = 0
+let speedup = 30
+const speedsarray = [30] //minimum 30
+let currentspeed = 180
+
+const filleds = []
+
+
+function changespawnspeed(){
+  const random = parseInt(Math.random()*speedsarray.length)
+  return speedsarray[random]
+}
 
 let sounds = new Array()
-sounds[0] = new Audio('sonidos/puntoparati.mp3')
-sounds[1] = new Audio('sonidos/leachuntastes.mp3')
-sounds[2] = new Audio('sonidos/quebien.mp3')
-sounds[3] = new Audio('sonidos/acertastes.mp3')
+sounds[0] = 'sonidos/puntoparati.mp3'
+sounds[1] = 'sonidos/leachuntastes.mp3'
+sounds[2] = 'sonidos/quebien.mp3'
+sounds[3] = 'sonidos/acertastes.mp3'
 
 document.body.onload = function(){
   mainaudio.src = 'sonidos/pika pika.mp3'
   mainaudio.play()
   console.log("pika", "if user gesture play audio file"); 
+  
+ const sources = ['imagenes/leonardosotelo89.jpg', 'imagenes/polerarojagoogleaistudio.png'].forEach(src => {
+    let createid = "img" + id
+    const img = new Image();
+    img.src = src;
+    img.id = createid
+    id++
+    photos.push(img)
+});
+
+console.log(photos) 
 }
 
 
@@ -228,35 +257,89 @@ for (let i = 0; i < 25; i++) {
   moleHoles.push(moleHole);
 }
 
+
+
 // Create a function to spawn a mole
 function spawnMole() {
+  timer++
+  displayScore.innerHTML = score +"/"+ currentspeed
+  if(timer > currentspeed){
+    currentspeed = changespawnspeed()
+    
   // Get a random mole hole
-  const randomMoleHole = moleHoles[Math.floor(Math.random() * moleHoles.length)];
-
+  //const randomMoleHole = moleHoles[12] //test 
+  let randomMoleHole
+  do{
+    randomMoleHole = moleHoles[Math.floor(Math.random() * moleHoles.length)];
+  } while (filleds.includes(randomMoleHole))
+ filleds.push(randomMoleHole)
   // Add a mole image to the mole hole
-  const moleImage = document.createElement('img');
-  moleImage.src = 'imagenes/leonardosotelo89.jpg';
-  moleImage.onload = () =>{
-  moleImage.classList.add('mole');
-  moleImage.classList.add('upndown');
-  randomMoleHole.appendChild(moleImage);
-} 
+const wrapper = document.createElement('div');   // animación
+wrapper.classList.add('mole-wrapper', 'upndown');
+wrapper.style.animationDuration = aduration + 's';
 
-let displayScore = document.getElementById('div1')
-moleImage.onclick = function(){
+const skin = document.createElement('div');      // imagen
+skin.classList.add('redtshirt')
+//skin.classList.toggle('redtshirt')
+skin.classList.remove('redtshirt')
+skin.classList.add('mole', 'normaltshirt');
+
+wrapper.appendChild(skin);
+randomMoleHole.appendChild(wrapper);
+
+
+
+wrapper.addEventListener('click', moleclick) 
+
+function moleclick(){
   score++
-  displayScore.innerHTML = score
-  let random = Math.floor(Math.random()*sounds.length)
-  let chosen = sounds[random]
-  chosen.play()
-  randomMoleHole.removeChild(moleImage)
-  //moleImage.removeAttribute('onclick')
+  if(speedup < 180){speedup += 3} 
+  speedsarray.push(speedup)
+  console.log(speedsarray) 
+  const cssclassduration =  `${document.querySelector('.upndown').style.animationDuration}`
+  
+  displayScore.innerHTML = score +"/"+ currentspeed
+  if(score < 50){
+  let randomhit = Math.floor(Math.random()*sounds.length)
+  let hit = new Audio()
+  hit.src = sounds[randomhit]
+  hit.play()
+  } else{
+    let pika = new Audio('sonidos/pika pika.mp3')
+    pika.play()
+  }
+  //randomMoleHole.removeChild(wrapper)
+  //clearTimeout(removeimage)
+  
+ // skin.classList.toggle('redtshirt')
+ // skin.classList.remove('normaltshirt')
+ 
+  wrapper.offsetWidth;  // Congela estilos del frame actual
+
+requestAnimationFrame(() => {
+    skin.classList.remove('normaltshirt')
+    skin.classList.add('redtshirt')
+})
+  wrapper.removeEventListener('click', moleclick )
+  
+  
+  if (score % 2 == 0 && aduration > 0.5) {
+    aduration -= 0.1;
+  }
+ 
 }
   // Start a timer to hide the mole
-  setTimeout(() => {
-    randomMoleHole.removeChild(moleImage);
-  }, 1000);
-}
+const removeimage =  setTimeout(() => {
+    filleds.shift()
+    randomMoleHole.removeChild(wrapper);
+  }, aduration*1000);
+  timer = 0
+} 
+
+  let gameloop = window.requestAnimationFrame(spawnMole) 
+}//spawnMole's end 
+
+
 
 // Start the game
 function start(){
@@ -294,18 +377,22 @@ function start(){
   }
 }
 
+
+
 function juego(){
 setTimeout(()=>{
-let intervaljuego = setInterval(() =>{
   spawnMole()
-} , 1000);
 }, 5000)
 } 
+
+
 
 function reload(){
   window.location.reload()
   start()
 }
+
+
 //about
 setrata.addEventListener('click', about)
 
@@ -319,11 +406,34 @@ mainaudio.addEventListener('ended', function(){
   }) 
 }
 
+
+
 function repeat(){
   setrata.addEventListener('click', about) 
 }
 
 
+
+/*
+if (speedup > 120) {
+    speedup--
+} else if (speedup > 80) {
+    speedup -= 2
+} else if (speedup > 50) {
+    speedup -= 3
+} else {
+    speedup -= 1
+}
+if (speedup >= 30){
+speedsarray.push(speedup)
+}
+*/
+
+
+/*
+speedup = Math.max(30, speedup - 1)
+speedsarray.push(speedup)
+*/
 </script>
 <footer>            <!--              --></footer>
 </body>
